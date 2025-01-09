@@ -50,4 +50,7 @@ def analyse() -> None:
     # TODO apart from getting global topics, we should also assign topics to each entry (or perhaps only the dominant topic, as Dennis mentioned).
     # TODO choose word representation and model for topic modelling.
 
+    # TODO remove this dummy result with actual model results.
+    df['dominant_topic'] = 'd&d'
+
     _write_data(df)

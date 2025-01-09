@@ -29,4 +29,3 @@ def analyse() -> None:
     df = _read_data()
     df = _get_sentiments(df)
     _write_data(df)
-    print(df)
