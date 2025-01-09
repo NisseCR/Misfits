@@ -11,14 +11,15 @@ pd.set_option('display.width', 1000)
 
 def main():
     # Clean and filter raw data.
-    # setup(sample=0.001)
+    setup(sample=0.01)
 
     # Perform topic modelling.
-    # topic_modelling.preprocess()
+    topic_modelling.preprocess()
     topic_modelling.analyse()
 
     # Perform sentiment analysis.
     sentiment_analysis.preprocess()
+    sentiment_analysis.analyse()
 
 
 if __name__ == '__main__':

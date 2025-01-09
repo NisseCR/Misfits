@@ -19,3 +19,16 @@ def _write_data(df: pd.DataFrame) -> None:
 def preprocess() -> None:
     df = _read_data()
     _write_data(df)
+
+
+def _read_preprocessed_data() -> pd.DataFrame:
+    return pd.read_csv('./data/sa_preprocess.csv')
+
+
+def _write_topics(df: pd.DataFrame) -> None:
+    df.to_csv('./data/sa_sentiments.csv', index=False)
+
+
+def analyse() -> None:
+    df = _read_preprocessed_data()
+    _write_topics(df)

@@ -2,14 +2,17 @@
 Preprocess the data for topic modelling, including tokenization and using a word representation.
 Analyse the data with topic modeling.
 """
-
+from typing import Tuple, List
 
 import pandas as pd
 import spacy
 import nltk
 import string
+
+from gensim.corpora import Dictionary
 from nltk.corpus import stopwords
 from gensim.models import CoherenceModel, LdaModel
+from gensim import corpora
 
 
 # Retrieve pre-defined stop words.
@@ -74,6 +77,34 @@ def _create_lda_model(id2word, corpus, num_topics: int) -> LdaModel:
     )
 
 
+def _setup_lda_data(df: pd.DataFrame) -> tuple[Dictionary, list[list[tuple[int, int]]]]:
+    # Create word2id dictionary.
+    comments = df['text_preprocess'].apply(lambda x: x.split(' ')).copy()
+    id2word = corpora.Dictionary(comments.values)
+
+    # Filter out extremes to limit the number of features.
+    id2word.filter_extremes(
+        no_below=2,
+        no_above=0.95
+    )
+
+    # Create BoW collection.
+    corpus = [id2word.doc2bow(doc) for doc in comments.values]
+
+    return id2word, corpus
+
+
+def _write_topics(df: pd.DataFrame) -> None:
+    df.to_csv('./data/tm_topics.csv', index=False)
+
+
 def analyse() -> None:
     df = _read_preprocessed_data()
-    print(df.head())
+    id2word, corpus = _setup_lda_data(df)
+    lda_model = _create_lda_model(id2word, corpus, 7)
+
+    # TODO doesn't full work yet i think, but brain is now deadge
+    # TODO apart from getting global topics, we should also assign topics to each entry (or perhaps only the dominant topic, as Dennis mentioned).
+    # TODO choose word representation and model for topic modelling.
+
+    _write_topics(df)
