@@ -1,11 +1,16 @@
 import pandas as pd
 
+from app.setup import setup
 
-def read_data() -> pd.DataFrame:
-    df = pd.read_csv('./data/News_China_Africa.csv')
-    return df
+
+# Define pandas DataFrame print settings.
+pd.set_option('display.max_columns', 10)
+pd.set_option('display.width', 1000)
+
+
+def main():
+    setup()
 
 
 if __name__ == '__main__':
-    df = read_data()
-    print(df.head())
+    main()
