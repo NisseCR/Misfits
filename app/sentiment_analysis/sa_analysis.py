@@ -1,19 +1,27 @@
 import pandas as pd
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from transformers import pipeline, Pipeline
 
 
 def _read_data() -> pd.DataFrame:
     return pd.read_csv('./data/sa_preprocess.csv')
 
 
-def _get_sentiment(text: str, model: SentimentIntensityAnalyzer) -> float:
-    scores = model.polarity_scores(text)
-    return scores['compound']
+def _get_sentiment(text: str, classifier: Pipeline) -> dict:
+    # TODO Currently runs into an error due to texts being too long.
+    # TODO https://github.com/huggingface/transformers/issues/1791
+    # TODO fix, otherwise works on shorter texts
+    return classifier(text)[0]
 
 
 def _get_sentiments(df: pd.DataFrame) -> pd.DataFrame:
-    model = SentimentIntensityAnalyzer()
-    df['compound_sentiment'] = df['text_preprocess'].apply(lambda x: _get_sentiment(x, model))
+    # TODO Be more mindful of parameters we choose, rather that sticking to default values.
+    classifier = pipeline(model='distilbert/distilbert-base-uncased-finetuned-sst-2-english')
+
+    # Save classifier sentiment output.
+    df['class'] = df['text_preprocess'].apply(lambda x: _get_sentiment(x, classifier))
+    df['sentiment'] = df['class'].apply(lambda x: x['label'])
+    df['score'] = df['class'].apply(lambda x: x['score'])
+    df = df.drop(columns=['class'])
     return df
 
 

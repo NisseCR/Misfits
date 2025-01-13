@@ -15,14 +15,14 @@ def main():
     # Intermediate results get saved in files, so you can e.g. go straight to sentiment analysis if need be.
 
     # Clean and filter raw data.
-    setup(sample=0.001)
+    # setup(sample=0.001)
 
     # Perform topic modelling.
-    tm_preprocessing.preprocess()
-    tm_analysis.analyse()
+    # tm_preprocessing.preprocess()
+    # tm_analysis.analyse()
 
     # Perform sentiment analysis.
-    sa_preprocessing.preprocess()
+    # sa_preprocessing.preprocess()
     sa_analysis.analyse()
 
     # Results

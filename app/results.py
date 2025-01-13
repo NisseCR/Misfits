@@ -12,7 +12,7 @@ def _read_data() -> tuple[DataFrame, DataFrame]:
 
 def _merge_data(df_topics: DataFrame, df_sentiments: DataFrame) -> pd.DataFrame:
     # Select only columns unique to right-hand side.
-    df_sentiments = df_sentiments[['id', 'compound_sentiment']]
+    df_sentiments = df_sentiments[['id', 'sentiment', 'score']]
 
     # Perform merge of data.
     df = pd.merge(df_topics, df_sentiments, how='inner', on='id')
@@ -22,5 +22,5 @@ def _merge_data(df_topics: DataFrame, df_sentiments: DataFrame) -> pd.DataFrame:
 def get_results() -> pd.DataFrame:
     df_topics, df_sentiments = _read_data()
     df = _merge_data(df_topics, df_sentiments)
-    df = df[['id', 'headline', 'text', 'dominant_topic', 'compound_sentiment']]
+    df = df[['id', 'headline', 'text', 'dominant_topic', 'sentiment', 'score']]
     return df
