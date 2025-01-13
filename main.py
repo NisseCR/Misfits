@@ -27,7 +27,8 @@ def main():
 
     # Results
     df = get_results()
-    print(df.head())
+    print(df)
+    print(df['sentiment'].value_counts())
 
 
 if __name__ == '__main__':

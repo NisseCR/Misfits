@@ -10,7 +10,7 @@ def _get_sentiment(text: str, classifier: Pipeline) -> dict:
     # TODO Currently runs into an error due to texts being too long.
     # TODO https://github.com/huggingface/transformers/issues/1791
     # TODO fix, otherwise works on shorter texts
-    return classifier(text)[0]
+    return classifier(text[:512])[0]
 
 
 def _get_sentiments(df: pd.DataFrame) -> pd.DataFrame:
