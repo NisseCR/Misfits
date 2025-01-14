@@ -1,4 +1,4 @@
-import pandas as pd
+ import pandas as pd
 import re
 
 # read in the raw data
@@ -13,18 +13,20 @@ places_in_china = ['beijing', 'shanghai', 'hong kong', 'guangzhou','chengdu', 'c
                    'hunan', 'wuhan', 'sichuan','hubei']
 major_companies_in_Nigeria = ['sinopec', 'cnpc', 'sepco', 'ccecc', 'cscec', 'cnoon', 'huawei', 'ztc']
 # removed company names containing china, shanghai, since it's already picked up opon
-top_50_companies = ['tencent', 'icbc', 'kweichow moutai','petrochina', 'alibaba', 'catl', 'pinduoduo', 'cm bank',
+top_50_companies = ['tencent', 'icbc', 'kweichow moutai','petrochina', 'alibaba', '^catl$', 'pinduoduo', 'cm bank',
                     'cnooc', 'xiaomi', 'ping an insurance', 'meituan', 'byd', 'sinopec', 'china telecom', 'midea',
                     'wuliangye yibin','bank of communications', 'netease', 'zijin mining', 'industrial bank',
                     'foxconn industrial internet', 'jingdong mall', 'citic securities', 'smic', 'nongfu spring',
                     'east money information', 'citic bank', 'trip.com','luxshare precision', 'mindrey',
                     "the people’s insurance company", 'jiangsu hengrui medicine', 'gree electric appliances',
                     'hikvision', 'haier smart home', 'foshan haitian flavouring and food', 'citic limited', 'ping an bank']
+other = ['uighurs']
 
 filtering_words.extend(ambassadors)
 filtering_words.extend(places_in_china)
 filtering_words.extend(major_companies_in_Nigeria)
 filtering_words.extend(top_50_companies)
+filtering_words.extend(other)
 
 # funtion filtering
 def _china_filter(df: pd.DataFrame, minimal_text_mention, minimal_headline_mention) -> pd.DataFrame:
@@ -44,6 +46,11 @@ def _china_filter(df: pd.DataFrame, minimal_text_mention, minimal_headline_menti
     df = df[(df['china_mention_text'] >= minimal_text_mention) & (df['china_mention_headline'] >= minimal_headline_mention)]
     return df
 
+def length_filter(df: pd.DataFrame, min_word_count, max_word_count):
+    df = df[df['word_count' >= min_word_count]]
+    df[df['word_count' <= max_word_count]]
+    return df
+
 def _write_data(df: pd.DataFrame) -> None:
     df.to_csv('Filtered.csv', index=False)
 
@@ -51,6 +58,7 @@ def _write_data(df: pd.DataFrame) -> None:
 def preprocess() -> None:
     df = _read_data()
     df = _china_filter(df, 3, 1)
+    df = length_filter(df, 100, 1000)
     _write_data(df)
 
 preprocess()
