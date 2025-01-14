@@ -31,6 +31,7 @@ filtering_words.extend(places_in_china)
 filtering_words.extend(major_companies_in_Nigeria)
 filtering_words.extend(top_50_companies)
 filtering_words.extend(other)
+set_keywords = set(filtering_words)
 
 # funtion filtering
 def _china_filter(df: pd.DataFrame, minimal_text_mention, minimal_headline_mention) -> pd.DataFrame:
@@ -40,7 +41,7 @@ def _china_filter(df: pd.DataFrame, minimal_text_mention, minimal_headline_menti
     for index, row in df.iterrows():
         china_mention_text = []
         china_mention_headline = []
-        for word in filtering_words:
+        for word in set_keywords:
             china_mention_text.extend(re.findall(word, str(row['text']), re.IGNORECASE))
             china_mention_headline.extend(re.findall(word, str(row['headline']), re.IGNORECASE))
         col_text_mentions.append(len(china_mention_text))
@@ -64,7 +65,7 @@ def _write_data(df: pd.DataFrame) -> None:
 def preprocess() -> None:
     df = _read_data()
     df = _china_filter(df, 3, 1)
-    df = length_filter(df, 200, 1000)
+    df = length_filter(df, 100, 1000)
     _write_data(df)
 
 
