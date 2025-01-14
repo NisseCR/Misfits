@@ -7,11 +7,13 @@ def _read_data() -> pd.DataFrame:
 
 
 # prepare the list of words to filter by
-filtering_words = [r'^chin', r'^sino', 'mainland', "people's republic", r'^ccp$','Xi Jinping', 'belt and road initiative']
+filtering_words = [r'^chin', r'^sino', 'mainland', 'PRC', r'^ccp$', 'Zhongguo']
+politics = ['belt and road initiative', r'^BRI$' ,'Xi Jinping', 'Hu Jintao', 'Jiang Zemin', 'Yang Shangkun', 'Li Xiannian',
+            'Liu Shaoqi', 'Mao Zedong', r'^Mao$', 'SASAC', 'FOCAC', "People's Liberation Party", 'CADF', 'CAETC']
 ambassadors = ['zhou pingjian', 'cui jianchun', 'sun baohong', 'wang shiting', 'lu kun']
 places_in_china = ['beijing', 'shanghai', 'hong kong', 'guangzhou','chengdu', 'chongqing', 'shenzhen', 'tianjin', 'dongguan',
                 'hangzhou', 'nanjing', 'xian', 'qingdao', 'shenyang','foshan','harbin','macau', 'guangdong', 'yunnan',
-                   'hunan', 'wuhan', 'sichuan','hubei']
+                   'hunan', 'wuhan', 'sichuan','hubei', 'tibet', 'xinjiang', 'Zhejiang', 'Fujian', 'Shandong', '']
 major_companies_in_Nigeria = ['sinopec', 'cnpc', 'sepco', 'ccecc', 'cscec', 'cnoon', 'huawei', 'ztc']
 # removed company names containing china, shanghai, since it's already picked up opon
 top_50_companies = ['tencent', 'icbc', 'kweichow moutai','petrochina', 'alibaba', '^catl$', 'pinduoduo', 'cm bank',
@@ -20,8 +22,10 @@ top_50_companies = ['tencent', 'icbc', 'kweichow moutai','petrochina', 'alibaba'
                     'foxconn industrial internet', 'jingdong mall', 'citic securities', 'smic', 'nongfu spring',
                     'east money information', 'citic bank', 'trip.com','luxshare precision', 'mindrey',
                     "the people’s insurance company", 'jiangsu hengrui medicine', 'gree electric appliances',
-                    'hikvision', 'haier smart home', 'foshan haitian flavouring and food', 'citic limited', 'ping an bank']
-other = ['uighurs']
+                    'hikvision', 'haier', 'foshan haitian flavouring and food', 'citic limited', 'ping an bank']
+other = ['uighurs', 'confucius institute', 'mandarin', 'cantonese', 'silk road', 'forbidden city', 'great wall',
+         'wechat', 'weibo',  'baidu', 'xinhua news agency', 'CCTV', 'Tiananmen Square', 'Shaolin', 'terracotta army',
+         '']
 
 filtering_words.extend(ambassadors)
 filtering_words.extend(places_in_china)
@@ -61,7 +65,7 @@ def _write_data(df: pd.DataFrame) -> None:
 def preprocess() -> None:
     df = _read_data()
     df = _china_filter(df, 3, 1)
-    df = length_filter(df, 100, 1000)
+    df = length_filter(df, 200, 1000)
     _write_data(df)
 
 
