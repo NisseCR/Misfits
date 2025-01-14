@@ -14,7 +14,7 @@ nlp = spacy.load('en_core_web_sm')
 
 
 def _read_data() -> pd.DataFrame:
-    return pd.read_csv('./data/cleaned.csv')
+    return pd.read_csv('./data/filtered.csv')
 
 
 def _preprocess_text(text: list):

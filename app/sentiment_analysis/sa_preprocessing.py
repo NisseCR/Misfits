@@ -2,7 +2,7 @@ import pandas as pd
 
 
 def _read_data() -> pd.DataFrame:
-    return pd.read_csv('./data/cleaned.csv')
+    return pd.read_csv('./data/filtered.csv')
 
 
 def _preprocess_data(df: pd.DataFrame) -> pd.DataFrame:

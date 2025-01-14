@@ -1,9 +1,10 @@
- import pandas as pd
+import pandas as pd
 import re
 
 # read in the raw data
 def _read_data() -> pd.DataFrame:
-    return pd.read_csv('News_China_Africa.csv')
+    return pd.read_csv('./data/cleaned.csv')
+
 
 # prepare the list of words to filter by
 filtering_words = [r'^chin', r'^sino', 'mainland', "people's republic", r'^ccp$','Xi Jinping', 'belt and road initiative']
@@ -46,13 +47,15 @@ def _china_filter(df: pd.DataFrame, minimal_text_mention, minimal_headline_menti
     df = df[(df['china_mention_text'] >= minimal_text_mention) & (df['china_mention_headline'] >= minimal_headline_mention)]
     return df
 
+
 def length_filter(df: pd.DataFrame, min_word_count, max_word_count):
-    df = df[df['word_count' >= min_word_count]]
-    df[df['word_count' <= max_word_count]]
+    df = df[df['word_count'] >= min_word_count]
+    df = df[df['word_count'] <= max_word_count]
     return df
 
+
 def _write_data(df: pd.DataFrame) -> None:
-    df.to_csv('Filtered.csv', index=False)
+    df.to_csv('./data/filtered.csv', index=False)
 
 
 def preprocess() -> None:
@@ -60,8 +63,6 @@ def preprocess() -> None:
     df = _china_filter(df, 3, 1)
     df = length_filter(df, 100, 1000)
     _write_data(df)
-
-preprocess()
 
 
 
