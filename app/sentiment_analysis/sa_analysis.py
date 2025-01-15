@@ -10,12 +10,17 @@ def _get_sentiment(text: str, classifier: Pipeline) -> dict:
     # TODO Currently runs into an error due to texts being too long.
     # TODO https://github.com/huggingface/transformers/issues/1791
     # TODO fix, otherwise works on shorter texts
-    return classifier(text[:512])[0]
+    return classifier(text)[0]
 
 
 def _get_sentiments(df: pd.DataFrame) -> pd.DataFrame:
     # TODO Be more mindful of parameters we choose, rather that sticking to default values.
-    classifier = pipeline(model='distilbert/distilbert-base-uncased-finetuned-sst-2-english')
+    classifier = pipeline(
+        task='sentiment-analysis',
+        model="mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis",
+        max_length=512,
+        truncation=True
+    )
 
     # Save classifier sentiment output.
     df['class'] = df['text_preprocess'].apply(lambda x: _get_sentiment(x, classifier))

@@ -19,8 +19,13 @@ def _merge_data(df_topics: DataFrame, df_sentiments: DataFrame) -> pd.DataFrame:
     return df
 
 
+def _write_data(df: pd.DataFrame) -> None:
+    df.to_csv('./data/results.csv')
+
+
 def get_results() -> pd.DataFrame:
     df_topics, df_sentiments = _read_data()
     df = _merge_data(df_topics, df_sentiments)
-    df = df[['id', 'headline', 'text', 'dominant_topic', 'sentiment', 'score']]
+    df = df[['id', 'headline', 'text', 'label', 'dominant_topic', 'kmeans_cluster', 'sentiment']]
+    _write_data(df)
     return df

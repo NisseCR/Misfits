@@ -1,4 +1,5 @@
 import pandas as pd
+import time
 
 from app.filtering import preprocess
 from app.setup import setup
@@ -16,18 +17,18 @@ def main():
     # Intermediate results get saved in files, so you can e.g. go straight to sentiment analysis if need be.
 
     # Clean and filter raw data.
-    setup(sample=0.01)
+    # setup(sample=1)
 
     # Filter data
-    preprocess()
+    # preprocess()
 
     # Perform topic modelling.
-    tm_preprocessing.preprocess()
-    tm_analysis.analyse()
+    # tm_preprocessing.preprocess()
+    # tm_analysis.analyse()
 
     # Perform sentiment analysis.
-    sa_preprocessing.preprocess()
-    sa_analysis.analyse()
+    # sa_preprocessing.preprocess()
+    # sa_analysis.analyse()
 
     # Results
     df = get_results()
@@ -36,4 +37,6 @@ def main():
 
 
 if __name__ == '__main__':
+    start = time.time()
     main()
+    print("--- %s seconds ---" % (time.time() - start))
