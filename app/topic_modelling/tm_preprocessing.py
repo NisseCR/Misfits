@@ -15,7 +15,8 @@ nlp = spacy.load('en_core_web_sm')
 stemmer = PorterStemmer()
 
 # Define custom stopwords
-custom_stopwords = {'ghana', 'nigeria', 'country', 'countries', 'city'}
+custom_stopwords = {'ghana', 'nigeria', 'country', 'countries', 'city', 'year',
+                    'people', ' percent', 'yuan', 'province'}
 
 
 def _read_data() -> pd.DataFrame:
@@ -43,9 +44,6 @@ def _preprocess_text(text: list) -> str:
                                         string.punctuation + string.digits))
     text = re.sub(r'[^a-zA-Z\s]', '', text)
     text = text.strip().lower()
-
-    # Stemming
-    # text = ' '.join([stemmer.stem(word) for word in text.split()])
 
     return text
 

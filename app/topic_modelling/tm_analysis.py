@@ -9,9 +9,14 @@ from matplotlib import pyplot as plt
 from wordcloud import WordCloud
 import numpy as np
 
+from nltk.corpus import stopwords
+from app.topic_modelling.tm_preprocessing import custom_stopwords
+
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
+
+default_stop_words = set(stopwords.words('english'))
 
 
 def _read_data() -> pd.DataFrame:
@@ -23,7 +28,7 @@ def _compute_tfidf(df: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
     Compute the TF-IDF matrix to identify the most relevant words for LDA,
     and to apply the k-means clustering.
     """
-    vectorizer = TfidfVectorizer()
+    vectorizer = TfidfVectorizer(stop_words=list(default_stop_words.union(custom_stopwords)))
     tfidf_matrix = vectorizer.fit_transform(df['text_preprocess'])
     feature_names = vectorizer.get_feature_names_out()
     tfidf_df = pd.DataFrame(tfidf_matrix.toarray(), columns=feature_names)
@@ -82,7 +87,7 @@ def _kmeans_clustering(tfidf_df: pd.DataFrame,
     return kmeans
 
 
-def plot_wordcloud(model, feature_names=None, num_words=10):
+def _plot_wordcloud(model, feature_names=None, num_words=10):
     """
     Generate word clouds for the provided model.
 
@@ -98,7 +103,7 @@ def plot_wordcloud(model, feature_names=None, num_words=10):
     else:
         raise ValueError("Unsupported model.")
 
-    num_cols = 3
+    num_cols = 4
     num_rows = (num_topics + num_cols - 1) // num_cols
 
     fig, axes = plt.subplots(nrows=num_rows, ncols=num_cols, figsize=(15, num_rows * 5))
@@ -130,9 +135,9 @@ def plot_wordcloud(model, feature_names=None, num_words=10):
 
 # THis code is copied from a medium article
 def _lda_best_num_topics(corpus, id2word, df):
-    min_topics = 5
+    min_topics = 10
     max_topics = 30
-    step_size = 5
+    step_size = 1
     topics_range = range(min_topics, max_topics + 1, step_size)
 
     coherence_scores = []
@@ -178,12 +183,12 @@ def _lda_best_num_topics(corpus, id2word, df):
     return optimal_num_topics
 
 
-def compare_rand_index(df):
+def _compare_rand_index(df):
     ari_score = adjusted_rand_score(df['dominant_topic'], df['kmeans_cluster'])
     print(f"Adjusted Rand Index between LDA Topics and K-means Clusters: {ari_score:.4f}")
 
 
-def get_top_lda_words(lda_model, num_words=10):
+def _get_top_lda_words(lda_model, num_words=10):
     topics = lda_model.show_topics(formatted=False, num_topics=-1)
     top_words = {}
 
@@ -194,17 +199,22 @@ def get_top_lda_words(lda_model, num_words=10):
     return top_words
 
 
-def get_top_kmeans_words(kmeans_model, feature_names, num_words=10):
+def _get_top_kmeans_words(kmeans_model, feature_names, num_words=10):
     top_words = {}
 
     # Sort centroids for each cluster
     order_centroids = kmeans_model.cluster_centers_.argsort()[:, ::-1]
+    terms = feature_names
 
     for cluster_id in range(len(order_centroids)):
-        words = [feature_names[ind] for ind in order_centroids[cluster_id, :num_words]]
+        words = [terms[ind] for ind in order_centroids[cluster_id, :num_words]]
         top_words[cluster_id] = words
 
     return top_words
+
+
+def _write_topic_words(df: pd.DataFrame) -> None:
+    df.to_csv("./data/topic_words.csv", index=False)
 
 
 def _write_data(df: pd.DataFrame) -> None:
@@ -216,25 +226,39 @@ def analyse():
 
     tfidf_df, feature_names = _compute_tfidf(df)
     relevant_features = _filter_by_tfidf(tfidf_df, feature_names, 0.002,
-                                         0.007)
+                                         0.5)
     id2word, corpus = _setup_lda_data(df, relevant_features)
 
-    lda_model = _create_lda_model(id2word, corpus, 10)
-    plot_wordcloud(lda_model, relevant_features)
-    #_lda_best_num_topics(corpus, id2word, df)
+    # Run the models
+    lda_model = _create_lda_model(id2word, corpus, 12)
+    kmeans_model = _kmeans_clustering(tfidf_df, relevant_features, 12)
+
+    # Assign model results to original df
     df['dominant_topic'] = _get_dominant_topic(lda_model, corpus)
-    top_lda_words = get_top_lda_words(lda_model)
-    for topic_id, words in top_lda_words.items():
-        print(f"Topic {topic_id}: {', '.join(words)}")
-
-    kmeans_model = _kmeans_clustering(tfidf_df, relevant_features, 10)
-    plot_wordcloud(kmeans_model, relevant_features)
     df['kmeans_cluster'] = kmeans_model.labels_
-    top_kmeans_words = get_top_kmeans_words(kmeans_model, feature_names)
+
+    # Plot model results
+    #_lda_best_num_topics(corpus, id2word, df)
+    # plot_wordcloud(lda_model, relevant_features)
+    # plot_wordcloud(kmeans_model, relevant_features)
+
+    # Print score results
+    _compare_rand_index(df)
+
+    # Create results df
+    top_lda_words = _get_top_lda_words(lda_model)
+    lda_words_list = []
+    for topic_id, words in top_lda_words.items():
+        lda_words_list.append({'topic_id': topic_id, 'top_words': ', '.join(words)})
+    lda_words_df = pd.DataFrame(lda_words_list)
+
+    top_kmeans_words = _get_top_kmeans_words(kmeans_model, relevant_features)
+    kmeans_words_list = []
     for cluster_id, words in top_kmeans_words.items():
-        print(f"Cluster {cluster_id}: {', '.join(words)}")
+        kmeans_words_list.append({'cluster_id': cluster_id, 'top_words': ', '.join(words)})
+    kmeans_words_df = pd.DataFrame(kmeans_words_list)
 
-    compare_rand_index(df)
+    combined_df = pd.concat([lda_words_df, kmeans_words_df], axis=1)
+    _write_topic_words(combined_df)
 
-    print(df)
     _write_data(df)
