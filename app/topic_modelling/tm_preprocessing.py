@@ -45,7 +45,7 @@ def _preprocess_text(text: list) -> str:
     text = text.strip().lower()
 
     # Stemming
-    text = ' '.join([stemmer.stem(word) for word in text.split()])
+    # text = ' '.join([stemmer.stem(word) for word in text.split()])
 
     return text
 
