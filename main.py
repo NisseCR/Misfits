@@ -6,6 +6,7 @@ from app.setup import setup
 from app.topic_modelling import tm_preprocessing, tm_analysis
 from app.sentiment_analysis import sa_preprocessing, sa_analysis
 from app.results import get_results
+from app.plots import plot
 
 # Define pandas DataFrame print settings.
 pd.set_option('display.max_columns', 10)
@@ -17,23 +18,21 @@ def main():
     # Intermediate results get saved in files, so you can e.g. go straight to sentiment analysis if need be.
 
     # Clean and filter raw data.
-    #setup(sample=1)
+    # setup(sample=1)
 
     # Filter data
-    #preprocess()
+    # preprocess()
 
     # Perform topic modelling.
     # tm_preprocessing.preprocess()
-    tm_analysis.analyse()
+    # tm_analysis.analyse()
 
     # Perform sentiment analysis.
     # sa_preprocessing.preprocess()
     # sa_analysis.analyse()
 
     # Results
-    #df = get_results()
-    #print(df)
-    #print(df['sentiment'].value_counts())
+    df = get_results()
 
 
 if __name__ == '__main__':
