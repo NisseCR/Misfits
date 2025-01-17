@@ -6,6 +6,7 @@ from app.setup import setup
 from app.topic_modelling import tm_preprocessing, tm_analysis
 from app.sentiment_analysis import sa_preprocessing, sa_analysis
 from app.results import get_results
+from app.plots import plot
 
 # Define pandas DataFrame print settings.
 pd.set_option('display.max_columns', 10)
@@ -32,8 +33,6 @@ def main():
 
     # Results
     df = get_results()
-    print(df)
-    print(df['sentiment'].value_counts())
 
 
 if __name__ == '__main__':
