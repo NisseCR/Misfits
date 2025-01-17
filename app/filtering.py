@@ -7,7 +7,7 @@ def _read_data() -> pd.DataFrame:
 
 
 # prepare the list of words to filter by
-filtering_words = [r'^chin', r'^sino', 'mainland', 'PRC', r'^ccp$', 'Zhongguo']
+filtering_words = ['china', 'chinese', r'^sino', 'mainland', 'PRC', r'^ccp$', 'Zhongguo']
 politics = ['belt and road initiative', r'^BRI$' ,'Xi Jinping', 'Hu Jintao', 'Jiang Zemin', 'Yang Shangkun', 'Li Xiannian',
             'Liu Shaoqi', 'Mao Zedong', r'^Mao$', 'SASAC', 'FOCAC', "People's Liberation Party", 'CADF', 'CAETC']
 ambassadors = ['zhou pingjian', 'cui jianchun', 'sun baohong', 'wang shiting', 'lu kun']
