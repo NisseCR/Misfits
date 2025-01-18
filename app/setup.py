@@ -22,7 +22,8 @@ def _clean_data(df: pd.DataFrame) -> pd.DataFrame:
 def _filter_data(df: pd.DataFrame, frac: float) -> pd.DataFrame:
     # TODO implement actual news article filter.
     # Dummy sample for now.
-    df = df.sample(frac=frac, random_state=1)
+    if frac < 1:
+        df = df.sample(frac=frac, random_state=1)
     return df
 
 
