@@ -17,7 +17,7 @@ def _get_sentiments(df: pd.DataFrame) -> pd.DataFrame:
     # TODO Be more mindful of parameters we choose, rather that sticking to default values.
     classifier = pipeline(
         task='sentiment-analysis',
-        model="mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis",
+        model="siebert/sentiment-roberta-large-english",
         max_length=512,
         truncation=True
     )

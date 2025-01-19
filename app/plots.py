@@ -2,6 +2,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
+# Define pandas DataFrame print settings.
+pd.set_option('display.max_columns', 10)
+pd.set_option('display.width', 1000)
+
+
 def _read_data_source() -> pd.DataFrame:
     return pd.read_csv('../data/News_China_Africa.csv')
 
@@ -16,11 +21,11 @@ def _plot_word_counts(df: pd.DataFrame) -> None:
 
 
 def plot():
-    df_source = _read_data_source()
-    df_results = _read_data_results()
+    df = _read_data_results()
 
     # Plots
-    _plot_word_counts(df_source)
+    plt.hist(df['sentiment'])
+    plt.show()
 
 
 if __name__ == '__main__':
