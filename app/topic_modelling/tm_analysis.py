@@ -70,11 +70,14 @@ def _create_lda_model(id2word, corpus, num_topics: int) -> LdaModel:
 
 def _get_dominant_topic(lda_model, corpus) -> list[int]:
     dominant_topics = []
+    topic_percentages = []
     for doc in corpus:
         topics = lda_model.get_document_topics(doc)
         dominant_topic = max(topics, key=lambda x: x[1])[0]
+        topic_percentage = max(topics, key=lambda x: x[1])[1]
         dominant_topics.append(dominant_topic)
-    return dominant_topics
+        topic_percentages.append(topic_percentage)
+    return dominant_topics, topic_percentages
 
 
 def _kmeans_clustering(tfidf_df: pd.DataFrame,
@@ -234,16 +237,18 @@ def analyse():
     kmeans_model = _kmeans_clustering(tfidf_df, relevant_features, 12)
 
     # Assign model results to original df
-    df['dominant_topic'] = _get_dominant_topic(lda_model, corpus)
+    dominant_topics, topic_percentages = _get_dominant_topic(lda_model, corpus)
+    df['dominant_topic'] = dominant_topics
+    df['topic_percentage'] = topic_percentages
     df['kmeans_cluster'] = kmeans_model.labels_
 
     # Plot model results
     #_lda_best_num_topics(corpus, id2word, df)
-    _plot_wordcloud(lda_model, relevant_features)
+    #_plot_wordcloud(lda_model, relevant_features)
     # _plot_wordcloud(kmeans_model, relevant_features)
 
     # Print score results
-    _compare_rand_index(df)
+    #_compare_rand_index(df)
 
     # Create results df
     top_lda_words = _get_top_lda_words(lda_model)
