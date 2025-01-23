@@ -16,7 +16,7 @@ stemmer = PorterStemmer()
 
 # Define custom stopwords
 custom_stopwords = {'ghana', 'nigeria', 'country', 'countries', 'city', 'year',
-                    'people', ' percent', 'yuan', 'province'}
+                    'people', 'percent', 'yuan', 'province'}
 
 
 def _read_data() -> pd.DataFrame:

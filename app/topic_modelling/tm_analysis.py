@@ -239,8 +239,8 @@ def analyse():
 
     # Plot model results
     #_lda_best_num_topics(corpus, id2word, df)
-    # plot_wordcloud(lda_model, relevant_features)
-    # plot_wordcloud(kmeans_model, relevant_features)
+    _plot_wordcloud(lda_model, relevant_features)
+    # _plot_wordcloud(kmeans_model, relevant_features)
 
     # Print score results
     _compare_rand_index(df)
