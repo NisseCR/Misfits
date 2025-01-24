@@ -1,0 +1,98 @@
+---
+title: "Graphs"
+author: "Agnieszka Kubica"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# TO DO
+- add outlets by matching headlin
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+data <- read_csv("results.csv")
+data_outlets <- read_csv("News_China_Africa.csv") |>
+  select(outlet, headline)
+
+
+# add outlet
+data <- merge(data,data_outlets,by="headline")
+
+
+
+head(data)
+head(data_outlets)
+```
+
+# topic per country
+```{r}
+ggplot(data)+
+  aes(x = topic_label, fill = label)+
+  geom_bar()
+```
+- topic 5, 7 and 1 much more frequent in Ghana
+- topic 8,4,9,6 more popular in Nigeria 
+
+
+# Topics per outlet
+```{r}
+ggplot(data)+
+  aes(x = topic_label, fill = outlet)+
+  geom_bar()
+```
+- some topics more frequent than others in general as main topic
+- topic five is overly represented by News Ghana
+- topic eigth is overly represented by News Ghana
+
+```{r}
+ggplot(data)+
+  aes(colour = topic_label, x = outlet)+
+  geom_bar()
+```
+
+# Sentiments per country
+```{r}
+ggplot(data)+
+  aes(x = label, fill = sentiment)+
+  geom_bar()
+```
+
+
+# Sentiments per outlet
+```{r}
+ggplot(data)+
+  aes(x = outlet, fill = sentiment)+
+  geom_bar()
+```
+```{r}
+data |>
+  mutate(is_positive = ifelse(sentiment == "POSITIVE", TRUE, FALSE))|>
+  group_by(outlet) |>
+  summarise(ratio_sentiment = sum(is_positive)/ sum(!is_positive)) |>
+  ungroup()|>
+  ggplot()+
+  aes(x = outlet, y  = ratio_sentiment)+
+  geom_col()
+```
+- actually the way higher overal positive apprach to China stems from News Ghana position
+
+# Topics and sentiments
+
+```{r}
+ggplot(data)+
+  aes(x = topic_label, fill = sentiment)+
+  geom_bar()+
+  facet_wrap(~label)
+```
+```{r}
+ggplot(data)+
+  aes(x = topic_label, fill = sentiment)+
+  geom_bar()+
+  facet_wrap(~outlet)
+```
+
+
+
